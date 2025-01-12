@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            color: #333;
+            padding: 50px;
+        }
+        h1 {
+            color: #4a4a4a;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        input {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 1em;
+            transition: background 0.3s;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        #nextBtn {
+            background: #007BFF;
+            color: #fff;
+        }
+        #nextBtn:hover {
+            background: #0056b3;
+        }
+        #shareBtn {
+            background: #25D366;
+            color: #fff;
+        }
+        #shareBtn:hover {
+            background: #1da853;
+        }
+        #monthDisplay {
+            font-weight: bold;
+            font-size: 1.5em;
+            margin: 20px auto;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>2025 Teen Predictions</h1>
+    <div id="entry">
+        <p>Enter your details to unlock your future!</p>
+        <input id="name" type="text" placeholder="Your Name">
+        <input id="dob" type="date">
+        <button onclick="enterSite()">Reveal My Future!</button>
+    </div>
+    <div id="predictions" style="display:none;">
+        <h2 id="greeting"></h2>
+        <div id="content">
+            <img id="monthImage" src="" alt="Prediction Image" style="display:none;">
+            <p id="monthDisplay"></p>
+        </div>
+        <button id="nextBtn" onclick="showNextMonth()">Next</button>
+        <button id="shareBtn" onclick="shareToWhatsApp()" style="display:none;">Share to Unlock More!</button>
+    </div>
+    <script>
+        const firstSix = [
+            { text: "January: Brace yourself, you're finally getting a date!", img: "https://via.placeholder.com/400x200?text=January+Love" },
+            { text: "February: You’ll go viral for a hilarious meme. Get ready for the fame!", img: "https://via.placeholder.com/400x200?text=February+Viral" },
+            { text: "March: A surprise gift will arrive. (Hint: It’s chocolate!)", img: "https://via.placeholder.com/400x200?text=March+Surprise" },
+            { text: "April: Oops! You’ll get caught in the rain, but you’ll love it.", img: "https://via.placeholder.com/400x200?text=April+Rain" },
+            { text: "May: Your crush might actually text you back. Finally!", img: "https://via.placeholder.com/400x200?text=May+Crush" },
+            { text: "June: You’ll win a random competition you didn’t enter.", img: "https://via.placeholder.com/400x200?text=June+Win" }
+        ];
+        const nextSix = [
+            { text: "July: A secret admirer will reveal themselves. Exciting!", img: "https://via.placeholder.com/400x200?text=July+Admirer" },
+            { text: "August: You’ll discover a new talent. TikTok ready?", img: "https://via.placeholder.com/400x200?text=August+Talent" },
+            { text: "September: You’ll accidentally become famous for a dance move.", img: "https://via.placeholder.com/400x200?text=September+Dance" },
+            { text: "October: Free pizza is coming your way. Get the napkins ready!", img: "https://via.placeholder.com/400x200?text=October+Pizza" },
+            { text: "November: You’ll be mistaken for a celebrity. Enjoy the attention!", img: "https://via.placeholder.com/400x200?text=November+Fame" },
+            { text: "December: A surprise party will leave you smiling till 2026!", img: "https://via.placeholder.com/400x200?text=December+Party" }
+        ];
+
+        let currentIndex = 0;
+        let unlockedNextSix = false;
+
+        function enterSite() {
+            const name = document.getElementById('name').value;
+            const dob = document.getElementById('dob').value;
+            if (!name || !dob) {
+                alert('Please enter both your name and date of birth!');
+                return;
+            }
+            document.getElementById('entry').style.display = 'none';
+            document.getElementById('predictions').style.display = 'block';
+            document.getElementById('greeting').innerText = `Hi ${name}, your 2025 looks amazing!`;
+            showPrediction(firstSix[currentIndex]);
+            document.getElementById('nextBtn').style.display = 'inline-block';
+        }
+
+        function showPrediction(prediction) {
+            document.getElementById('monthDisplay').innerText = prediction.text;
+            document.getElementById('monthImage').src = prediction.img;
+            document.getElementById('monthImage').style.display = 'block';
+        }
+
+        function showNextMonth() {
+            currentIndex++;
+            if (currentIndex < firstSix.length) {
+                showPrediction(firstSix[currentIndex]);
+            } else if (!unlockedNextSix) {
+                document.getElementById('nextBtn').style.display = 'none';
+                document.getElementById('shareBtn').style.display = 'inline-block';
+                document.getElementById('monthDisplay').innerText = "Share this with your friends to unlock predictions for July to December!";
+                document.getElementById('monthImage').style.display = 'none';
+            } else {
+                showPrediction(nextSix[currentIndex - firstSix.length]);
+                if (currentIndex - firstSix.length === nextSix.length - 1) {
+                    document.getElementById('nextBtn').style.display = 'none';
+                }
+            }
+        }
+
+        function shareToWhatsApp() {
+            alert('Share this link to unlock the rest of your predictions!');
+            const message = "Check out this hilarious 2025 prediction site!";
+            const whatsappURL = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+            window.open(whatsappURL, '_blank');
+            unlockedNextSix = true;
+            currentIndex = 0;
+            document.getElementById('shareBtn').style.display = 'none';
+            document.getElementById('nextBtn').style.display = 'inline-block';
+            showPrediction(nextSix[currentIndex]);
+        }
+    </script>
+</body>
+</html>
